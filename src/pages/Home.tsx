@@ -102,19 +102,6 @@ export default function Home() {
                 </button>
               </div>
             </form>
-
-            {/* Quick location pills */}
-            <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-4 sm:mt-5">
-              {['Murgeshpalya', 'CV Raman Nagar', 'GM Palya', 'Kaggadasapura'].map(loc => (
-                <Link
-                  key={loc}
-                  to={`/listings?location=${encodeURIComponent(loc)}`}
-                  className="px-2.5 sm:px-3.5 py-1 bg-white/10 backdrop-blur-md text-white/90 hover:bg-white/20 hover:text-white text-[10px] sm:text-xs font-semibold rounded-full transition-all border border-white/5"
-                >
-                  {loc}
-                </Link>
-              ))}
-            </div>
           </div>
         </div>
       </section>
