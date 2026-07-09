@@ -64,11 +64,16 @@ const toCamelCase = (obj: any): any => {
   if (Array.isArray(obj)) {
     return obj.map(toCamelCase)
   } else if (obj !== null && typeof obj === 'object') {
-    return Object.keys(obj).reduce((acc, key) => {
+    const result = Object.keys(obj).reduce((acc, key) => {
       const camelKey = key.replace(/_([a-z])/g, (_, char) => char.toUpperCase())
       acc[camelKey] = toCamelCase(obj[key])
       return acc
     }, {} as any)
+    // Ensure reviews exists
+    if (!result.reviews) {
+      result.reviews = []
+    }
+    return result
   }
   return obj
 }

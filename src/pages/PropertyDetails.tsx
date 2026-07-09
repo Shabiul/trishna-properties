@@ -12,7 +12,7 @@ import { SEO } from '../components/SEO';
 export default function PropertyDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { properties, fetchProperties, getPropertyById } = usePropertyStore();
+  const { properties, fetchProperties, getPropertyById, loading } = usePropertyStore();
   
   useEffect(() => {
     fetchProperties()
@@ -27,7 +27,19 @@ export default function PropertyDetails() {
   const highlightsRef = useScrollReveal({ direction: 'up', stagger: 0.05 });
   const descRef = useScrollReveal({ direction: 'up' });
   const amenitiesRef = useScrollReveal({ direction: 'up', stagger: 0.04 });
+  const reviewsRef = useScrollReveal({ direction: 'up', stagger: 0.08 });
   const similarRef = useScrollReveal({ direction: 'up', stagger: 0.12 });
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand-500 mx-auto mb-4"></div>
+          <p className="text-sm text-neutral-500">Loading property...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!property) {
     return (
@@ -48,6 +60,11 @@ export default function PropertyDetails() {
     if (price >= 10000000) return `₹${(price / 10000000).toFixed(2)} Cr`;
     return `₹${(price / 100000).toFixed(2)} L`;
   };
+
+  // Calculate average rating
+  const averageRating = property.reviews.length > 0 
+    ? (property.reviews.reduce((sum, r) => sum + r.rating, 0) / property.reviews.length).toFixed(1)
+    : "0";
 
   const similarProperties = (() => {
     const sameArea = properties.filter(p => p.id !== property.id && p.areaName === property.areaName);
@@ -207,6 +224,45 @@ export default function PropertyDetails() {
                     referrerPolicy="no-referrer-when-downgrade"
                     src={`https://www.google.com/maps?q=${encodeURIComponent(property.mapQuery)}&output=embed`}
                   />
+                </div>
+              </div>
+            )}
+
+            {/* Reviews Section */}
+            {property.reviews.length > 0 && (
+              <div className="bg-white rounded-2xl shadow-card p-6 lg:p-8">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-lg font-display font-bold text-navy-900 tracking-wide">Customer Reviews</h2>
+                  <div className="flex items-center gap-2">
+                    <div className="text-yellow-500 text-lg">★</div>
+                    <span className="text-xl font-bold text-navy-900">{averageRating}</span>
+                    <span className="text-sm text-neutral-500">({property.reviews.length} reviews)</span>
+                  </div>
+                </div>
+                <div ref={reviewsRef} className="space-y-6">
+                  {property.reviews.map((review, index) => (
+                    <div key={review.id} className="border-b border-neutral-100 pb-6 last:border-b-0 last:pb-0">
+                      <div className="flex items-start gap-4 mb-3">
+                        <img 
+                          src={review.avatar} 
+                          alt={`${review.name}'s avatar`}
+                          className="w-12 h-12 rounded-full bg-neutral-100"
+                        />
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between mb-1">
+                            <h3 className="text-sm font-semibold text-navy-900">{review.name}</h3>
+                            <span className="text-xs text-neutral-500">{review.date}</span>
+                          </div>
+                          <div className="flex items-center gap-1 mb-2">
+                            {[...Array(5)].map((_, i) => (
+                              <div key={i} className={`text-sm ${i < review.rating ? 'text-yellow-500' : 'text-neutral-300'}`}>★</div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                      <p className="text-sm text-neutral-700 leading-relaxed">{review.text}</p>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}

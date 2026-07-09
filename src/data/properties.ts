@@ -1,8 +1,17 @@
+export interface Review {
+  id: string;
+  name: string;
+  avatar: string;
+  rating: number;
+  date: string;
+  text: string;
+}
+
 export interface Property {
   id: string;
   title: string;
   location: string;
-  areaName: string; // Changed to camelCase to match toCamelCase conversion
+  areaName: string;
   price: number;
   type: 'rent' | 'sale';
   bedrooms: number;
@@ -19,6 +28,7 @@ export interface Property {
   description: string;
   contactEmail: string;
   mapQuery: string;
+  reviews: Review[];
 }
 
 // Helper to generate image paths from public directory
@@ -37,8 +47,58 @@ function imgListMixed(folder: string, extensions: string[]): string[] {
   });
 }
 
+// Helper to generate reviews with Indian names
+function generateReviews(count: number): Review[] {
+  const names = [
+    "Rahul Sharma", "Priya Patel", "Amit Kumar", "Ananya Singh", "Vikram Mehta",
+    "Neha Gupta", "Suresh Nair", "Divya Iyer", "Rajesh Desai", "Pooja Hegde",
+    "Arjun Reddy", "Sneha Joshi", "Manoj Tiwari", "Riya Malhotra", "Karthik Raj",
+    "Anjali Menon", "Rohit Saxena", "Meera Kapoor", "Nikhil Verma", "Aditi Sharma"
+  ];
+  
+  const texts = [
+    "Absolutely love this place! The location is perfect and the amenities are top-notch.",
+    "Great experience living here! Very spacious and well-maintained property.",
+    "The management team is super responsive and helpful. Highly recommend!",
+    "Perfect family home with all the necessary facilities close by.",
+    "Best decision we made! The property is exactly as shown in the pictures.",
+    "Very peaceful and safe neighborhood. Love the community feel.",
+    "Modern amenities and beautiful interiors. Worth every penny!",
+    "Excellent connectivity to major IT parks and shopping centers.",
+    "The property is well-lit and ventilated. Perfect for working professionals.",
+    "Kids love the play area and we love the green spaces around!"
+  ];
+
+  const avatars = [
+    "https://api.dicebear.com/7.x/avataaars/svg?seed=Rahul",
+    "https://api.dicebear.com/7.x/avataaars/svg?seed=Priya",
+    "https://api.dicebear.com/7.x/avataaars/svg?seed=Amit",
+    "https://api.dicebear.com/7.x/avataaars/svg?seed=Ananya",
+    "https://api.dicebear.com/7.x/avataaars/svg?seed=Vikram",
+    "https://api.dicebear.com/7.x/avataaars/svg?seed=Neha",
+    "https://api.dicebear.com/7.x/avataaars/svg?seed=Suresh",
+    "https://api.dicebear.com/7.x/avataaars/svg?seed=Divya",
+    "https://api.dicebear.com/7.x/avataaars/svg?seed=Rajesh",
+    "https://api.dicebear.com/7.x/avataaars/svg?seed=Pooja"
+  ];
+
+  return Array.from({ length: count }, (_, i) => {
+    const name = names[i % names.length];
+    const date = new Date();
+    date.setDate(date.getDate() - Math.floor(Math.random() * 180)); // Random date in last 6 months
+    return {
+      id: `review-${i}`,
+      name,
+      avatar: avatars[i % avatars.length],
+      rating: Math.floor(Math.random() * 2) + 4, // 4 or 5 stars
+      date: date.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' }),
+      text: texts[i % texts.length]
+    };
+  });
+}
+
 export const defaultProperties: Property[] = [
-  // ── MURGESHPALYA ─────────────────────────────
+  // ─── MURGESHPALYA ─────────────────────────────
   {
     id: '550e8400-e29b-41d4-a716-446655440001',
     title: 'Luxury 3BHK in Gated Community',
@@ -60,6 +120,7 @@ export const defaultProperties: Property[] = [
     description: 'Stunning fully furnished 3BHK apartment in a premium gated community in Murgeshpalya. Features modern interiors, spacious rooms with ample natural light, and top-tier amenities. Walking distance to major IT parks and well-connected to Old Airport Road and HAL areas.',
     contactEmail: 'trishnaproperties78@gmail.com',
     mapQuery: 'Murgeshpalya, Bangalore',
+    reviews: generateReviews(3),
   },
   {
     id: '550e8400-e29b-41d4-a716-446655440002',
@@ -82,6 +143,7 @@ export const defaultProperties: Property[] = [
     description: 'Beautiful fully furnished 2BHK in a well-maintained gated community. Rent of ₹60,000 includes maintenance. The apartment features modern furniture, modular kitchen, and is move-in ready. Located in the heart of Murgeshpalya with easy access to all conveniences.',
     contactEmail: 'trishnaproperties78@gmail.com',
     mapQuery: 'Murgeshpalya, Bangalore',
+    reviews: generateReviews(4),
   },
   {
     id: '550e8400-e29b-41d4-a716-446655440003',
@@ -104,6 +166,7 @@ export const defaultProperties: Property[] = [
     description: 'Well-maintained spacious 2BHK apartment with semi-furnished interiors. The rent of ₹50,000 includes maintenance charges with a deposit of 2 Lakhs. Located in a prime area of Murgeshpalya with excellent connectivity to IT corridors.',
     contactEmail: 'trishnaproperties78@gmail.com',
     mapQuery: 'Murgeshpalya, Bangalore',
+    reviews: generateReviews(3),
   },
   {
     id: '550e8400-e29b-41d4-a716-446655440004',
@@ -126,6 +189,7 @@ export const defaultProperties: Property[] = [
     description: 'Bright and well-ventilated 2BHK on a high floor with excellent views. Features covered parking, piped gas, and round-the-clock security. Ideal for working professionals and small families. Located close to shopping centers and hospitals.',
     contactEmail: 'trishnaproperties78@gmail.com',
     mapQuery: 'Murgeshpalya, Bangalore',
+    reviews: generateReviews(5),
   },
   {
     id: '550e8400-e29b-41d4-a716-446655440005',
@@ -146,6 +210,7 @@ export const defaultProperties: Property[] = [
     description: 'Cozy and well-designed 2BHK apartment at an excellent price point. The building is well-maintained with good security and amenities. Perfect for young families with children. Close to reputed schools, parks, and daily essentials.',
     contactEmail: 'trishnaproperties78@gmail.com',
     mapQuery: 'Murgeshpalya, Bangalore',
+    reviews: generateReviews(3),
   },
   {
     id: '550e8400-e29b-41d4-a716-446655440006',
@@ -166,6 +231,7 @@ export const defaultProperties: Property[] = [
     description: 'Affordable 2BHK apartment with all essential amenities included. Rent of ₹46,000 covers maintenance with a low deposit of 1.5 Lakhs. Features dedicated car parking, CCTV security, lift access, and reliable power backup.',
     contactEmail: 'trishnaproperties78@gmail.com',
     mapQuery: 'Murgeshpalya, Bangalore',
+    reviews: generateReviews(4),
   },
   {
     id: '550e8400-e29b-41d4-a716-446655440007',
@@ -187,9 +253,10 @@ export const defaultProperties: Property[] = [
     description: 'Spacious and well-planned 3BHK apartment perfect for families. Located in a well-maintained residential society with garden, gym, and round-the-clock security. Close to schools, hospitals, and shopping areas in Murgeshpalya.',
     contactEmail: 'trishnaproperties78@gmail.com',
     mapQuery: 'Murgeshpalya, Bangalore',
+    reviews: generateReviews(3),
   },
 
-  // ── CV RAMAN NAGAR ───────────────────────────
+  // ─── CV RAMAN NAGAR ───────────────────────────
   {
     id: '550e8400-e29b-41d4-a716-446655440008',
     title: 'Elegant 2BHK in CV Raman Nagar',
@@ -211,9 +278,10 @@ export const defaultProperties: Property[] = [
     description: 'A well-maintained 2BHK flat in the peaceful locality of CV Raman Nagar. Ideal for professionals working at DRDO, ISRO, or HAL. Features good ventilation, ample parking, and easy access to metro stations and the Old Airport Road corridor.',
     contactEmail: 'trishnaproperties78@gmail.com',
     mapQuery: 'CV Raman Nagar, Bangalore',
+    reviews: generateReviews(4),
   },
 
-  // ── GM PALYA ─────────────────────────────────
+  // ─── GM PALYA ─────────────────────────────────
   {
     id: '550e8400-e29b-41d4-a716-446655440009',
     title: 'Charming Home in GM Palya',
@@ -233,9 +301,10 @@ export const defaultProperties: Property[] = [
     description: 'Charming 2BHK home in the quiet residential pocket of GM Palya. Offers great value with an affordable rent and low deposit. Well-connected to Indiranagar and Old Airport Road. Ideal for small families and working professionals.',
     contactEmail: 'trishnaproperties78@gmail.com',
     mapQuery: 'GM Palya, CV Raman Nagar, Bangalore',
+    reviews: generateReviews(3),
   },
 
-  // ── BRIGADE PROPERTIES (SALE) ────────────────
+  // ─── BRIGADE PROPERTIES (SALE) ────────────────
   {
     id: '550e8400-e29b-41d4-a716-446655440010',
     title: 'Brigade Valencia — Premium Apartments',
@@ -256,6 +325,7 @@ export const defaultProperties: Property[] = [
     description: 'Brigade Valencia is a premium residential project in Bommasandra by Brigade Group. Spread across 24 acres with 85% green area, it offers a wide range of lifestyle amenities curated for recreation, wellness, and community living. Available in 2, 2.5, 3 & 4 BHK configurations from 1145 to 2490 sqft. Starting at ₹1.1 Cr.',
     contactEmail: 'trishnaproperties78@gmail.com',
     mapQuery: 'Brigade Valencia, Bommasandra, Bangalore',
+    reviews: generateReviews(5),
   },
   {
     id: '550e8400-e29b-41d4-a716-446655440011',
@@ -276,6 +346,7 @@ export const defaultProperties: Property[] = [
     description: 'Brigade Eternia is a thoughtfully designed residential project in Yelahanka New Town. It offers a comprehensive range of lifestyle, wellness, and recreational amenities for all age groups. Available in 1, 3 & 4 BHK apartment configurations ranging from 700 to 2926 sqft. Starting at ₹1.0 Cr.',
     contactEmail: 'trishnaproperties78@gmail.com',
     mapQuery: 'Brigade Eternia, Yelahanka New Town, Bangalore',
+    reviews: generateReviews(4),
   },
   {
     id: '550e8400-e29b-41d4-a716-446655440012',
@@ -296,6 +367,7 @@ export const defaultProperties: Property[] = [
     description: 'Brigade Insignia is an ultra-luxury residential development in Maruti Nagar, Devinagar. Spread across 5.88 acres with 6 towers and 60% green area, it features premium lifestyle amenities including a grand clubhouse, rooftop leisure spaces, and world-class recreational facilities. Available in 3, 4, 5 BHK & Penthouse configurations from 2145 to 4200 sqft. Starting at ₹3.2 Cr.',
     contactEmail: 'trishnaproperties78@gmail.com',
     mapQuery: 'Brigade Insignia, Devinagar, Bangalore',
+    reviews: generateReviews(5),
   },
   {
     id: '550e8400-e29b-41d4-a716-446655440013',
@@ -313,12 +385,13 @@ export const defaultProperties: Property[] = [
     amenities: ['Independent House', 'Water Supply', 'Power Backup', 'Parking Space'],
     highlights: ['760 sqft independent house', 'Ready to move in', 'Prime Kaggadasapura location', 'Excellent connectivity to Old Airport Road'],
     images: imgList('kaggadasapura', 2),
-    description: "Independent house for sale in Kaggadasapura, one of East Bangalore's well-connected residential areas. This 760 sqft property offers excellent connectivity to Old Airport Road and IT corridors. Ready to move in at ₹1.4 Cr. Ideal for end-users and investors looking for a compact property in a prime location.",
+    description: 'Independent house for sale in Kaggadasapura, one of East Bangalore\'s well-connected residential areas. This 760 sqft property offers excellent connectivity to Old Airport Road and IT corridors. Ready to move in at ₹1.4 Cr. Ideal for end-users and investors looking for a compact property in a prime location.',
     contactEmail: 'trishnaproperties78@gmail.com',
     mapQuery: 'Kaggadasapura, Bangalore',
+    reviews: generateReviews(3),
   },
 
-  // ── GODREJ PROPERTIES (SALE) ─────────────────
+  // ─── GODREJ PROPERTIES (SALE) ─────────────────
   {
     id: '550e8400-e29b-41d4-a716-446655440014',
     title: 'Godrej Lakeside Orchard — Premium Living',
@@ -339,6 +412,7 @@ export const defaultProperties: Property[] = [
     description: 'Godrej Lakeside Orchard is a premium residential project in Kodathi, off Sarjapur Road. Featuring a grand 48,000 sqft clubhouse and 50+ luxury amenities, this high-rise development offers studio to 4.5 BHK configurations from 1,215 to 2,668 sqft. Near RGA Tech Park, Wipro SEZ, and major IT hubs. Possession from 2028–2030. Starting at ₹1.5 Cr.',
     contactEmail: 'trishnaproperties78@gmail.com',
     mapQuery: 'Godrej Lakeside Orchard, Kodathi, Sarjapur Road, Bangalore',
+    reviews: generateReviews(4),
   },
   {
     id: '550e8400-e29b-41d4-a716-446655440015',
@@ -359,9 +433,10 @@ export const defaultProperties: Property[] = [
     description: 'Godrej Vanantara is an ultra-luxury forest-themed township off Bannerghatta Road, South Bangalore. Spread across 36 acres with 93% open spaces, 4,500+ trees, and forest trails, it redefines nature-centric living. Features a 70,000+ sqft clubhouse, cricket stadium, and premium amenities. Available in 2, 3 & 4.5 BHK from 1,250 to 2,900+ sqft. Starting at ₹1.57 Cr. Possession December 2031.',
     contactEmail: 'trishnaproperties78@gmail.com',
     mapQuery: 'Godrej Vanantara, Bannerghatta Road, Bangalore',
+    reviews: generateReviews(5),
   },
 
-  // ── MAHINDRA LIFESPACES (SALE) ───────────────
+  // ─── MAHINDRA LIFESPACES (SALE) ───────────────
   {
     id: '550e8400-e29b-41d4-a716-446655440016',
     title: 'Mahindra Blossom — Whitefield Premium',
@@ -381,6 +456,7 @@ export const defaultProperties: Property[] = [
     description: 'Mahindra Blossom is a premium eco-friendly residential project at Hope Farm Junction, Whitefield. Featuring a massive 97,000 sqft clubhouse, infinity pool, and 40+ world-class amenities. IGBC Green Home pre-certified with Net Zero Waste design. Available in 2, 3, 3.5 & 4 BHK from 1,250 to 2,450 sqft. Adjacent to Hopefarm Channasandra Metro Station. Starting at ₹2.0 Cr. Possession October 2030.',
     contactEmail: 'trishnaproperties78@gmail.com',
     mapQuery: 'Mahindra Blossom, Whitefield, Bangalore',
+    reviews: generateReviews(4),
   },
   {
     id: '550e8400-e29b-41d4-a716-446655440017',
@@ -401,6 +477,7 @@ export const defaultProperties: Property[] = [
     description: 'Mahindra Zen is a premium nature-crafted residential project in Singasandra, off Hosur Road. Featuring IGBC-certified sustainable design, smart home technology, and 30+ luxury amenities including infinity pool and yoga deck. Available in 3, 3.5 & 4 BHK from 1,337 to 2,410 sqft. Near Electronic City, HSR Layout, and upcoming metro stations. Starting at ₹1.88 Cr. Possession December 2028.',
     contactEmail: 'trishnaproperties78@gmail.com',
     mapQuery: 'Mahindra Zen, Singasandra, Hosur Road, Bangalore',
+    reviews: generateReviews(5),
   },
 ];
 

@@ -13,6 +13,7 @@ const emptyForm: Omit<Property, 'id'> = {
   bedrooms: 2, bathrooms: 2, area: 0, furnished: 'semi', deposit: '',
   availability: 'Immediate', amenities: [], highlights: [], images: [],
   description: '', contactEmail: 'trishnaproperties78@gmail.com', mapQuery: '',
+  reviews: [],
 };
 
 export default function AdminPropertyForm() {

@@ -58,7 +58,7 @@ export default function Listings() {
       case 'area-desc': result.sort((a, b) => b.area - a.area); break;
     }
     return result;
-  }, [searchTerm, propertyType, selectedLocation, bedrooms, sortBy]);
+  }, [searchTerm, propertyType, selectedLocation, bedrooms, sortBy, properties]);
 
   const activeFilterCount = [
     propertyType !== 'all',
