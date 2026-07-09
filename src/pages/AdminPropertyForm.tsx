@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Plus, X, Save, Image, Upload } from 'lucide-react';
+import { ArrowLeft, Plus, X, Save, Image, Upload, Star } from 'lucide-react';
 import { usePropertyStore, isAdminAuthenticated } from '../stores/propertyStore';
-import type { Property } from '../data/properties';
+import type { Property, Review } from '../data/properties';
 import { supabase } from '../lib/supabase';
 
 const FURNISHED_OPTIONS = ['fully', 'semi', 'unfurnished'] as const;
@@ -28,6 +28,11 @@ export default function AdminPropertyForm() {
   const [imageInput, setImageInput] = useState('');
   const [uploading, setUploading] = useState(false);
   const [pendingImagePreviews, setPendingImagePreviews] = useState<string[]>([]);
+  
+  // New review form state
+  const [newReviewName, setNewReviewName] = useState('');
+  const [newReviewRating, setNewReviewRating] = useState(5);
+  const [newReviewText, setNewReviewText] = useState('');
 
   useEffect(() => {
     if (!isAdminAuthenticated()) { navigate('/admin'); return; }
@@ -51,6 +56,26 @@ export default function AdminPropertyForm() {
 
   const removeFromList = (key: 'amenities' | 'highlights' | 'images', index: number) => {
     setForm(prev => ({ ...prev, [key]: prev[key].filter((_, i) => i !== index) }));
+  };
+
+  const addReview = () => {
+    if (!newReviewName.trim() || !newReviewText.trim()) return;
+    const newReview: Review = {
+      id: `review-${Date.now()}`,
+      name: newReviewName.trim(),
+      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(newReviewName.trim())}`,
+      rating: newReviewRating,
+      date: new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' }),
+      text: newReviewText.trim(),
+    };
+    setForm(prev => ({ ...prev, reviews: [...prev.reviews, newReview] }));
+    setNewReviewName('');
+    setNewReviewRating(5);
+    setNewReviewText('');
+  };
+
+  const removeReview = (index: number) => {
+    setForm(prev => ({ ...prev, reviews: prev.reviews.filter((_, i) => i !== index) }));
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -366,6 +391,75 @@ export default function AdminPropertyForm() {
               </div>
             </div>
           </div>
+        </section>
+
+        {/* Reviews */}
+        <section className="bg-white rounded-2xl shadow-sm border border-neutral-100 p-6">
+          <h2 className="text-sm font-semibold text-navy-900 uppercase tracking-wider mb-4">Reviews</h2>
+          
+          {/* Add New Review Form */}
+          <div className="mb-6 p-4 bg-neutral-50 rounded-xl border border-neutral-200">
+            <h3 className="text-xs font-semibold text-neutral-700 uppercase tracking-wide mb-3">Add New Review</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+              <div>
+                <label className="block text-xs font-medium text-neutral-500 mb-1">Reviewer Name</label>
+                <input value={newReviewName} onChange={e => setNewReviewName(e.target.value)} placeholder="e.g. Rahul Sharma"
+                  className="w-full px-3 py-2 bg-white border border-neutral-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500" />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-neutral-500 mb-1">Rating</label>
+                <div className="flex items-center gap-1">
+                  {[1,2,3,4,5].map(star => (
+                    <button key={star} type="button" onClick={() => setNewReviewRating(star)}
+                      className="p-1.5 rounded-lg transition-all">
+                      <Star className={`h-5 w-5 ${star <= newReviewRating ? 'text-yellow-400 fill-yellow-400' : 'text-neutral-300'}`} />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="mb-3">
+              <label className="block text-xs font-medium text-neutral-500 mb-1">Review Text</label>
+              <textarea value={newReviewText} onChange={e => setNewReviewText(e.target.value)} placeholder="Write a review..." rows={3}
+                className="w-full px-3 py-2 bg-white border border-neutral-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 resize-none" />
+            </div>
+            <button type="button" onClick={addReview}
+              className="flex items-center gap-2 px-4 py-2 bg-brand-500 text-white rounded-lg text-sm font-semibold hover:bg-brand-600 transition-colors">
+              <Plus className="h-4 w-4" />
+              Add Review
+            </button>
+          </div>
+
+          {/* Existing Reviews */}
+          {form.reviews.length > 0 ? (
+            <div className="space-y-4">
+              {form.reviews.map((review, i) => (
+                <div key={review.id} className="p-4 bg-neutral-50 rounded-xl border border-neutral-200">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-start gap-3">
+                      <img src={review.avatar} alt={`${review.name}'s avatar`} className="w-10 h-10 rounded-full bg-neutral-200" />
+                      <div>
+                        <h4 className="text-sm font-semibold text-navy-900">{review.name}</h4>
+                        <div className="flex items-center gap-1 mb-1">
+                          {[1,2,3,4,5].map(star => (
+                            <Star key={star} className={`h-3.5 w-3.5 ${star <= review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-neutral-300'}`} />
+                          ))}
+                          <span className="text-xs text-neutral-500 ml-1">{review.date}</span>
+                        </div>
+                        <p className="text-sm text-neutral-700 leading-relaxed">{review.text}</p>
+                      </div>
+                    </div>
+                    <button type="button" onClick={() => removeReview(i)}
+                      className="p-1.5 rounded-lg hover:bg-red-50 text-neutral-400 hover:text-red-500 transition-colors">
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-neutral-500 text-center py-6">No reviews yet. Add your first review above!</p>
+          )}
         </section>
       </form>
     </div>
