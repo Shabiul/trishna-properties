@@ -436,18 +436,15 @@ export default function AdminPropertyForm() {
               {form.reviews.map((review, i) => (
                 <div key={review.id} className="p-4 bg-neutral-50 rounded-xl border border-neutral-200">
                   <div className="flex items-start justify-between">
-                    <div className="flex items-start gap-3">
-                      <img src={review.avatar} alt={`${review.name}'s avatar`} className="w-10 h-10 rounded-full bg-neutral-200" />
-                      <div>
-                        <h4 className="text-sm font-semibold text-navy-900">{review.name}</h4>
-                        <div className="flex items-center gap-1 mb-1">
-                          {[1,2,3,4,5].map(star => (
-                            <Star key={star} className={`h-3.5 w-3.5 ${star <= review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-neutral-300'}`} />
-                          ))}
-                          <span className="text-xs text-neutral-500 ml-1">{review.date}</span>
-                        </div>
-                        <p className="text-sm text-neutral-700 leading-relaxed">{review.text}</p>
+                    <div className="flex-1">
+                      <h4 className="text-sm font-semibold text-navy-900">{review.name}</h4>
+                      <div className="flex items-center gap-1 mb-1">
+                        {[1,2,3,4,5].map(star => (
+                          <Star key={star} className={`h-3.5 w-3.5 ${star <= review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-neutral-300'}`} />
+                        ))}
+                        <span className="text-xs text-neutral-500 ml-1">{review.date}</span>
                       </div>
+                      <p className="text-sm text-neutral-700 leading-relaxed">{review.text}</p>
                     </div>
                     <button type="button" onClick={() => removeReview(i)}
                       className="p-1.5 rounded-lg hover:bg-red-50 text-neutral-400 hover:text-red-500 transition-colors">

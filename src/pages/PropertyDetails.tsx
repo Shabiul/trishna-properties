@@ -242,22 +242,15 @@ export default function PropertyDetails() {
                 <div ref={reviewsRef} className="space-y-6">
                   {property.reviews.map((review, index) => (
                     <div key={review.id} className="border-b border-neutral-100 pb-6 last:border-b-0 last:pb-0">
-                      <div className="flex items-start gap-4 mb-3">
-                        <img 
-                          src={review.avatar} 
-                          alt={`${review.name}'s avatar`}
-                          className="w-12 h-12 rounded-full bg-neutral-100"
-                        />
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between mb-1">
-                            <h3 className="text-sm font-semibold text-navy-900">{review.name}</h3>
-                            <span className="text-xs text-neutral-500">{review.date}</span>
-                          </div>
-                          <div className="flex items-center gap-1 mb-2">
-                            {[...Array(5)].map((_, i) => (
-                              <div key={i} className={`text-sm ${i < review.rating ? 'text-yellow-500' : 'text-neutral-300'}`}>★</div>
-                            ))}
-                          </div>
+                      <div className="mb-3">
+                        <div className="flex items-center justify-between mb-1">
+                          <h3 className="text-sm font-semibold text-navy-900">{review.name}</h3>
+                          <span className="text-xs text-neutral-500">{review.date}</span>
+                        </div>
+                        <div className="flex items-center gap-1 mb-2">
+                          {[...Array(5)].map((_, i) => (
+                            <div key={i} className={`text-sm ${i < review.rating ? 'text-yellow-500' : 'text-neutral-300'}`}>★</div>
+                          ))}
                         </div>
                       </div>
                       <p className="text-sm text-neutral-700 leading-relaxed">{review.text}</p>
